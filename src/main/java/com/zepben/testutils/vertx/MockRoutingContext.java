@@ -37,7 +37,7 @@ public class MockRoutingContext {
         private Map<String, Object> pathParamsMap = new HashMap<>();
         @Nullable private QueryParams queryParams;
         private Map<String, List<Object>> queryParamsMap = new HashMap<>();
-        private Set<QueryParamRule> queryParamRules = new HashSet<>();
+        private Set<QueryParamRule<?>> queryParamRules = new HashSet<>();
         @Nullable private Object decodedBody;
 
         public RoutingContext build() {
@@ -78,17 +78,17 @@ public class MockRoutingContext {
             return this;
         }
 
-        public Builder queryParam(QueryParamRule rule) {
+        public Builder queryParam(QueryParamRule<?> rule) {
             queryParams(rule);
             return this;
         }
 
-        public Builder queryParams(QueryParamRule... rule) {
+        public Builder queryParams(QueryParamRule<?>... rule) {
             queryParamRules.addAll(Arrays.asList(rule));
             return this;
         }
 
-        public Builder queryParam(QueryParamRule rule, Object... values) {
+        public Builder queryParam(QueryParamRule<?> rule, Object... values) {
             queryParam(rule);
             queryParamsMap.computeIfAbsent(rule.name(), k -> new ArrayList<>()).addAll(Arrays.asList(values));
             return this;

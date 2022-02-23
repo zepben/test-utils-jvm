@@ -17,6 +17,7 @@ public class Random {
 
     private static final SecureRandom random = new SecureRandom();
 
+    @SuppressWarnings("TypeParameterUnusedInFormals")
     public static <T extends Enum<?>> T ofEnum(Class<T> clazz) {
         int x = random.nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];

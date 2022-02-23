@@ -13,11 +13,11 @@ import javax.annotation.Nullable;
 @SuppressWarnings("WeakerAccess")
 public class ExpectExceptionError extends AssertionError {
 
-    ExpectExceptionError(String expected, String actual) {
+    public ExpectExceptionError(String expected, String actual) {
         this(expected, actual, null);
     }
 
-    ExpectExceptionError(String expected, String actual, @Nullable Throwable cause) {
+    public ExpectExceptionError(String expected, String actual, @Nullable Throwable cause) {
         super(formatForJunit(expected, actual), cause);
     }
 

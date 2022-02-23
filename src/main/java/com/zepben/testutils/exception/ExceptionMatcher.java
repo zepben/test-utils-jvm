@@ -15,7 +15,7 @@ public class ExceptionMatcher<T extends Throwable> {
 
     private final T exception;
 
-    ExceptionMatcher(T exception) {
+    public ExceptionMatcher(T exception) {
         this.exception = exception;
     }
 

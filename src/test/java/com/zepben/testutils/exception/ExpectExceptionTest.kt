@@ -24,7 +24,7 @@ import kotlin.Throws
 class ExpectExceptionTest {
     @Test
     fun catchesAny() {
-        expect { this.funcThatThrows() }.toThrowAny()
+        expect { funcThatThrows() }.toThrowAny()
         expect { funcThatThrowsRuntime() }.toThrowAny()
         expect { funcThatThrowsError() }.toThrowAny()
         expect { funcThatThrows("test with params") }.toThrowAny()
@@ -33,9 +33,9 @@ class ExpectExceptionTest {
 
     @Test
     fun matchesExceptionClassAndAncestors() {
-        expect { this.funcThatThrows() }.toThrow<IOException>()
-        expect { this.funcThatThrows() }.toThrow<Exception>()
-        expect { this.funcThatThrows() }.toThrow<Throwable>()
+        expect { funcThatThrows() }.toThrow<IOException>()
+        expect { funcThatThrows() }.toThrow<Exception>()
+        expect { funcThatThrows() }.toThrow<Throwable>()
         expect { funcThatThrowsRuntime() }.toThrow<RuntimeException>()
         expect { funcThatThrowsRuntime() }.toThrow<Exception>()
         expect { funcThatThrowsRuntime() }.toThrow<Throwable>()
@@ -46,7 +46,7 @@ class ExpectExceptionTest {
 
     @Test
     fun canBeReused() {
-        val expectException = expect { this.funcThatThrows() }
+        val expectException = expect { funcThatThrows() }
         expectException.toThrow<IOException>()
         expectException.toThrow<Exception>()
         expectException.toThrow<Throwable>()
@@ -54,16 +54,16 @@ class ExpectExceptionTest {
 
     @Test
     fun givesFluentAccessForCheckingException() {
-        expect { this.funcThatThrows() }
+        expect { funcThatThrows() }
             .toThrowAny()
             .withMessage("my test")
         expect { funcThatThrowsRuntime() }
             .toThrow<RuntimeException>()
             .withMessage("my runtime test")
-            .withCause(Exception::class.java)
+            .withCause<Exception>()
         expect { funcThatThrowsRuntime() }
             .toThrow<RuntimeException>()
-            .withCause(Exception::class.java)
+            .withCause<Exception>()
             .withMessage("my runtime test")
         expect { funcThatThrowsError() }
             .toThrowAny()
@@ -84,7 +84,7 @@ class ExpectExceptionTest {
     @Test
     fun givesAccessToTheOriginalException() {
         val exception = InvalidKeyException()
-        assertThat(expect { throw exception }.toThrowAny().exception(), IsEqual.equalTo(exception))
+        assertThat(expect { throw exception }.toThrowAny().exception, IsEqual.equalTo(exception))
     }
 
     @Test
@@ -106,7 +106,7 @@ class ExpectExceptionTest {
     @Test
     fun doesntMatchIncorrectExceptions() {
         expect {
-            expect { this.funcThatThrows() }.toThrow<IllegalArgumentException>()
+            expect { funcThatThrows() }.toThrow<IllegalArgumentException>()
         }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("IllegalArgumentException", "IOException"))
@@ -114,7 +114,7 @@ class ExpectExceptionTest {
 
     @Test
     fun doesntMatchIncorrectMessages() {
-        expect { expect { this.funcThatThrows() }.toThrowAny().withMessage("I am wrong") }
+        expect { expect { funcThatThrows() }.toThrowAny().withMessage("I am wrong") }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("I am wrong", "my test"))
     }
@@ -131,7 +131,7 @@ class ExpectExceptionTest {
 
     @Test
     fun doesntMatchAdditionalMessages() {
-        expect { expect { this.funcThatThrows() }.toThrowAny().withoutMessage() }
+        expect { expect { funcThatThrows() }.toThrowAny().withoutMessage() }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("", "my test"))
     }
@@ -139,9 +139,7 @@ class ExpectExceptionTest {
     @Test
     fun doesntMatchIncorrectCauses() {
         expect {
-            expect { funcThatThrowsRuntime() }.toThrowAny().withCause(
-                AssertionError::class.java
-            )
+            expect { funcThatThrowsRuntime() }.toThrowAny().withCause<AssertionError>()
         }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("AssertionError", "Exception"))
@@ -150,9 +148,7 @@ class ExpectExceptionTest {
     @Test
     fun doesntMatchMissingCauses() {
         expect {
-            expect { this.funcThatThrows() }.toThrowAny().withCause(
-                Exception::class.java
-            )
+            expect { funcThatThrows() }.toThrowAny().withCause<Exception>()
         }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("Exception", ""))
@@ -167,14 +163,14 @@ class ExpectExceptionTest {
 
     @Test
     fun matchesPattern() {
-        expect { this.funcThatThrows() }
+        expect { funcThatThrows() }
             .toThrow<IOException>()
             .withMessage(Pattern.compile("[\\w ]+"))
     }
 
     @Test
     fun doesntMatchPattern() {
-        expect { expect { this.funcThatThrows() }.toThrowAny().withMessage(Pattern.compile("[bad]+")) }
+        expect { expect { funcThatThrows() }.toThrowAny().withMessage(Pattern.compile("[bad]+")) }
             .toThrow<ExpectExceptionError>()
             .withMessage(ExpectExceptionError.formatForJunit("[bad]+", "my test"))
     }

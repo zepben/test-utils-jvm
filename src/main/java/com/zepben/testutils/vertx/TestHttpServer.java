@@ -50,12 +50,12 @@ public class TestHttpServer implements AutoCloseable {
     public int listen() {
         CountDownLatch latch = new CountDownLatch(1);
         server.requestHandler(router::accept)
-            .listen(getRandomPortNumber(), res -> {
-                if (res.failed())
-                    throw new RuntimeException(res.cause());
+                .listen(getRandomPortNumber(), res -> {
+                    if (res.failed())
+                        throw new RuntimeException(res.cause());
 
-                latch.countDown();
-            });
+                    latch.countDown();
+                });
 
         try {
             latch.await();

@@ -33,12 +33,15 @@ public class MockRoutingContext {
 
     public static class Builder {
 
-        @Nullable private PathParams pathParams;
+        @Nullable
+        private PathParams pathParams;
         private Map<String, Object> pathParamsMap = new HashMap<>();
-        @Nullable private QueryParams queryParams;
+        @Nullable
+        private QueryParams queryParams;
         private Map<String, List<Object>> queryParamsMap = new HashMap<>();
         private Set<QueryParamRule<?>> queryParamRules = new HashSet<>();
-        @Nullable private Object decodedBody;
+        @Nullable
+        private Object decodedBody;
 
         public RoutingContext build() {
             RoutingContext context = mock(RoutingContext.class);

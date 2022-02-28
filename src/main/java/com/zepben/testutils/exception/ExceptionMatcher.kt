@@ -32,24 +32,24 @@ class ExceptionMatcher<T : Throwable>(val exception: T) {
     }
 
     @Throws(ExpectExceptionError::class)
-    inline fun <reified R : Throwable> withCause(): ExceptionMatcher<T> {
-        val actual = exception.cause ?: throw ExpectExceptionError(R::class.simpleName, "")
-        if (actual is R) return this
-        throw ExpectExceptionError(R::class.simpleName, actual.javaClass.simpleName)
+    inline fun <reified U : Throwable> withCause(): ExceptionMatcher<T> {
+        val actual = exception.cause ?: throw ExpectExceptionError(U::class.simpleName, "")
+        if (actual is U) return this
+        throw ExpectExceptionError(U::class.simpleName, actual.javaClass.simpleName)
     }
 
     /**
      * Java-interoperable version of withCause()
      */
     @Throws(ExpectExceptionError::class)
-    fun <R : Throwable> withCause(clazz: Class<R>): ExceptionMatcher<T> {
+    fun <U : Throwable> withCause(clazz: Class<U>): ExceptionMatcher<T> {
         val actual = exception.cause ?: throw ExpectExceptionError(clazz.simpleName, "")
         if (clazz.isInstance(actual)) return this
         throw ExpectExceptionError(clazz.simpleName, actual.javaClass.simpleName)
     }
 
     @Throws(ExpectExceptionError::class)
-    fun <R: Throwable> withAnyCause(): ExceptionMatcher<T> = withCause<Throwable>()
+    fun withAnyCause(): ExceptionMatcher<T> = withCause<Throwable>()
 
     @Throws(ExpectExceptionError::class)
     fun withoutCause(): ExceptionMatcher<T> {

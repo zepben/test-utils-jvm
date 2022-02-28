@@ -40,13 +40,13 @@ public class DeployRestVerticleHelper implements AutoCloseable {
             vertx = Vertx.vertx();
             DeploymentOptions options = new DeploymentOptions().setConfig(config);
             vertx.deployVerticle(verticleClass.getName(),
-                options,
-                ar -> {
-                    if (ar.succeeded())
-                        future.complete();
-                    else
-                        future.fail(ar.cause());
-                });
+                    options,
+                    ar -> {
+                        if (ar.succeeded())
+                            future.complete();
+                        else
+                            future.fail(ar.cause());
+                    });
 
             await().atMost(5, TimeUnit.SECONDS).until(future::isComplete);
 

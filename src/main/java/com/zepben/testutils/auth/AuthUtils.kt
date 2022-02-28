@@ -26,8 +26,10 @@ class MockServerCallHandler<T, Y>(val startCallCallback: (ServerCall<T, Y>, Meta
     }
 }
 
-class MockServerCall<ReqT, RespT>(private val closeCallback: (Status?, Metadata?) -> Unit,
-                                  private val fullMethodName: String ="zepben.protobuf.np.NetworkProducer/testMethod") : ServerCall<ReqT, RespT>() {
+class MockServerCall<ReqT, RespT>(
+    private val closeCallback: (Status?, Metadata?) -> Unit,
+    private val fullMethodName: String = "zepben.protobuf.np.NetworkProducer/testMethod"
+) : ServerCall<ReqT, RespT>() {
     override fun sendMessage(message: RespT) {}
     override fun sendHeaders(headers: Metadata?) {}
     override fun getMethodDescriptor(): MethodDescriptor<ReqT, RespT> =

@@ -21,7 +21,7 @@ import java.util.regex.Pattern
 import kotlin.IllegalArgumentException
 import kotlin.Throws
 
-class ExpectExceptionTest {
+class ExpectExceptionKotlinTest {
     @Test
     fun catchesAny() {
         expect { funcThatThrows() }.toThrowAny()
@@ -176,6 +176,7 @@ class ExpectExceptionTest {
     }
 
     private fun funcThatDoesntThrow() {}
+
     @Throws(IOException::class)
     private fun funcThatThrows() {
         throw IOException("my test")

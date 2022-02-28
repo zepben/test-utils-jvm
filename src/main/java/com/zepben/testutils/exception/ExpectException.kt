@@ -16,7 +16,7 @@ class ExpectException private constructor(val func: RunWithException) {
     }
 
     @Throws(ExpectExceptionError::class)
-    inline fun <reified T: Throwable> toThrow(): ExceptionMatcher<T> {
+    inline fun <reified T : Throwable> toThrow(): ExceptionMatcher<T> {
         try {
             func.run()
         } catch (e: Throwable) {
@@ -30,7 +30,7 @@ class ExpectException private constructor(val func: RunWithException) {
      * Java-interoperable version of toThrow()
      */
     @Throws(ExpectExceptionError::class)
-    fun <T: Throwable> toThrow(clazz: Class<T>): ExceptionMatcher<T> {
+    fun <T : Throwable> toThrow(clazz: Class<T>): ExceptionMatcher<T> {
         try {
             func.run()
         } catch (e: Throwable) {

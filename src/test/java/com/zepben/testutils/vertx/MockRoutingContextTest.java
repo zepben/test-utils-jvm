@@ -18,8 +18,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 
-;
-
 public class MockRoutingContextTest {
 
     @Test
@@ -27,8 +25,8 @@ public class MockRoutingContextTest {
         PathParams pathParams = mock(PathParams.class);
 
         RoutingContext context = MockRoutingContext.builder()
-                .pathParams(pathParams)
-                .build();
+            .pathParams(pathParams)
+            .build();
 
         assertThat(RoutingContextEx.getPathParams(context), is(pathParams));
     }
@@ -40,10 +38,10 @@ public class MockRoutingContextTest {
         PathParamRule<Integer> param3 = PathParamRule.of("param3", ParamType.INT);
 
         RoutingContext context = MockRoutingContext.builder()
-                .pathParam(param1, "value1")
-                .pathParam(param2, "value2")
-                .pathParam(param3, 3)
-                .build();
+            .pathParam(param1, "value1")
+            .pathParam(param2, "value2")
+            .pathParam(param3, 3)
+            .build();
 
         PathParams pathParams = RoutingContextEx.getPathParams(context);
         assertThat(pathParams.get(param1), equalTo("value1"));

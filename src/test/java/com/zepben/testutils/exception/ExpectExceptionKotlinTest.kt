@@ -9,17 +9,11 @@ package com.zepben.testutils.exception
 
 import com.zepben.testutils.exception.ExpectException.Companion.expect
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import java.io.IOException
-import java.lang.RuntimeException
-import java.lang.AssertionError
-import org.hamcrest.core.IsEqual
-import java.lang.Error
-import java.lang.Exception
 import java.security.InvalidKeyException
 import java.util.regex.Pattern
-import kotlin.IllegalArgumentException
-import kotlin.Throws
 
 class ExpectExceptionKotlinTest {
     @Test
@@ -84,7 +78,7 @@ class ExpectExceptionKotlinTest {
     @Test
     fun givesAccessToTheOriginalException() {
         val exception = InvalidKeyException()
-        assertThat(expect { throw exception }.toThrowAny().exception, IsEqual.equalTo(exception))
+        assertThat(expect { throw exception }.toThrowAny().exception, equalTo(exception))
     }
 
     @Test

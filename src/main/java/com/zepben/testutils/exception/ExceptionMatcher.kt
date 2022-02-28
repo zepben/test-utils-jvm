@@ -7,7 +7,6 @@
  */
 package com.zepben.testutils.exception
 
-import kotlin.Throws
 import java.util.regex.Pattern
 
 class ExceptionMatcher<T : Throwable>(val exception: T) {

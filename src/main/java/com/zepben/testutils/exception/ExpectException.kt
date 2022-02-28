@@ -7,8 +7,6 @@
  */
 package com.zepben.testutils.exception
 
-import kotlin.Throws
-
 class ExpectException private constructor(val func: RunWithException) {
     fun interface RunWithException {
         @Throws(Throwable::class)

@@ -24,4 +24,5 @@ public class ExpectExceptionError extends AssertionError {
     static String formatForJunit(String expected, String actual) {
         return String.format("\nExpected: %s\n     but: was %s", expected, actual);
     }
+
 }

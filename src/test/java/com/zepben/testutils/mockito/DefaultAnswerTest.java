@@ -32,13 +32,13 @@ public class DefaultAnswerTest {
         validateMock(testObject, equalTo(0), equalTo(100));
 
         testObject = mock(TestObject.class,
-                DefaultAnswer.of(Integer.class, 100)
-                        .and(List.class, Arrays.asList(100, 200)));
+            DefaultAnswer.of(Integer.class, 100)
+                .and(List.class, Arrays.asList(100, 200)));
         validateMock(testObject, equalTo(0), equalTo(100), 100, 200);
 
         testObject = mock(TestObject.class,
-                DefaultAnswer.of(Integer.class, 100)
-                        .and(Integer.class, 200));
+            DefaultAnswer.of(Integer.class, 100)
+                .and(Integer.class, 200));
         validateMock(testObject, equalTo(0), equalTo(200));
     }
 

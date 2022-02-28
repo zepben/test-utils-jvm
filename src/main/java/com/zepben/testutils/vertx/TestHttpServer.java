@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 
 @SuppressWarnings("WeakerAccess")
 public class TestHttpServer implements AutoCloseable {
+
     private final Vertx vertx;
     private final HttpServer server;
     private final Router router;
@@ -50,12 +51,12 @@ public class TestHttpServer implements AutoCloseable {
     public int listen() {
         CountDownLatch latch = new CountDownLatch(1);
         server.requestHandler(router::accept)
-                .listen(getRandomPortNumber(), res -> {
-                    if (res.failed())
-                        throw new RuntimeException(res.cause());
+            .listen(getRandomPortNumber(), res -> {
+                if (res.failed())
+                    throw new RuntimeException(res.cause());
 
-                    latch.countDown();
-                });
+                latch.countDown();
+            });
 
         try {
             latch.await();
@@ -85,4 +86,5 @@ public class TestHttpServer implements AutoCloseable {
             throw new UncheckedIOException(ex);
         }
     }
+
 }

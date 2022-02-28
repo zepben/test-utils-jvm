@@ -34,10 +34,10 @@ public class MockRoutingContext {
     public static class Builder {
 
         @Nullable private PathParams pathParams;
-        private Map<String, Object> pathParamsMap = new HashMap<>();
+        private final Map<String, Object> pathParamsMap = new HashMap<>();
         @Nullable private QueryParams queryParams;
-        private Map<String, List<Object>> queryParamsMap = new HashMap<>();
-        private Set<QueryParamRule<?>> queryParamRules = new HashSet<>();
+        private final Map<String, List<Object>> queryParamsMap = new HashMap<>();
+        private final Set<QueryParamRule<?>> queryParamRules = new HashSet<>();
         @Nullable private Object decodedBody;
 
         public RoutingContext build() {
@@ -68,7 +68,7 @@ public class MockRoutingContext {
             return this;
         }
 
-        public Builder pathParam(PathParamRule rule, Object value) {
+        public Builder pathParam(PathParamRule<?> rule, Object value) {
             pathParamsMap.put(rule.name(), value);
             return this;
         }

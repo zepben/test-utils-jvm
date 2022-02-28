@@ -38,7 +38,7 @@ class AuthUtilsTest {
     }
 
     @Test
-    fun testMockMarshaller(){
+    fun testMockMarshaller() {
         val mm = MockMarshaller<Int>()
         // coverage
         assertThat(mm.stream(0), nullValue())

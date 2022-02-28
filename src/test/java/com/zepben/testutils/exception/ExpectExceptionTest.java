@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Zeppelin Bend Pty Ltd
+ * Copyright 2022 Zeppelin Bend Pty Ltd
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,11 +23,11 @@ public class ExpectExceptionTest {
 
     @Test
     public void catchesAny() {
-        expect(this::funcThatThrows).toThrow();
-        expect(this::funcThatThrowsRuntime).toThrow();
-        expect(this::funcThatThrowsError).toThrow();
-        expect(() -> funcThatThrows("test with params")).toThrow();
-        expect(() -> funcThatThrows("test with different params")).toThrow();
+        expect(this::funcThatThrows).toThrowAny();
+        expect(this::funcThatThrowsRuntime).toThrowAny();
+        expect(this::funcThatThrowsError).toThrowAny();
+        expect(() -> funcThatThrows("test with params")).toThrowAny();
+        expect(() -> funcThatThrows("test with different params")).toThrowAny();
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ExpectExceptionTest {
     @Test
     public void givesFluentAccessForCheckingException() {
         expect(this::funcThatThrows)
-            .toThrow()
+            .toThrowAny()
             .withMessage("my test");
 
         expect(this::funcThatThrowsRuntime)
@@ -65,23 +65,33 @@ public class ExpectExceptionTest {
 
         expect(this::funcThatThrowsRuntime)
             .toThrow(RuntimeException.class)
+            .withMessage("my runtime test")
+            .withAnyCause();
+
+        expect(this::funcThatThrowsRuntime)
+            .toThrow(RuntimeException.class)
             .withCause(Exception.class)
             .withMessage("my runtime test");
 
+        expect(this::funcThatThrowsRuntime)
+            .toThrow(RuntimeException.class)
+            .withAnyCause()
+            .withMessage("my runtime test");
+
         expect(this::funcThatThrowsError)
-            .toThrow()
+            .toThrowAny()
             .withoutCause()
             .withoutMessage();
 
         expect(this::funcThatThrowsError)
-            .toThrow()
+            .toThrowAny()
             .withoutMessage()
             .withoutCause();
     }
 
     @Test
     public void blankMessagesDontCount() {
-        expect(this::funcThatThrowsBlank).toThrow()
+        expect(this::funcThatThrowsBlank).toThrowAny()
             .withoutMessage();
     }
 
@@ -90,12 +100,12 @@ public class ExpectExceptionTest {
         InvalidKeyException exception = new InvalidKeyException();
         assertThat(expect(() -> {
             throw exception;
-        }).toThrow().exception(), equalTo(exception));
+        }).toThrowAny().getException(), equalTo(exception));
     }
 
     @Test
     public void doesntMatchMissingExceptionsAll() {
-        expect(() -> expect(this::funcThatDoesntThrow).toThrow())
+        expect(() -> expect(this::funcThatDoesntThrow).toThrowAny())
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("Throwable", ""));
     }
@@ -116,45 +126,49 @@ public class ExpectExceptionTest {
 
     @Test
     public void doesntMatchIncorrectMessages() {
-        expect(() -> expect(this::funcThatThrows).toThrow().withMessage("I am wrong"))
+        expect(() -> expect(this::funcThatThrows).toThrowAny().withMessage("I am wrong"))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("I am wrong", "my test"));
     }
 
     @Test
     public void doesntMatchMissingMessages() {
-        expect(() -> expect(this::funcThatThrowsError).toThrow().withMessage("message"))
+        expect(() -> expect(this::funcThatThrowsError).toThrowAny().withMessage("message"))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("message", "null"));
-        expect(() -> expect(this::funcThatThrowsBlank).toThrow().withMessage("message"))
+        expect(() -> expect(this::funcThatThrowsBlank).toThrowAny().withMessage("message"))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("message", ""));
     }
 
     @Test
     public void doesntMatchAdditionalMessages() {
-        expect(() -> expect(this::funcThatThrows).toThrow().withoutMessage())
+        expect(() -> expect(this::funcThatThrows).toThrowAny().withoutMessage())
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("", "my test"));
     }
 
     @Test
     public void doesntMatchIncorrectCauses() {
-        expect(() -> expect(this::funcThatThrowsRuntime).toThrow().withCause(AssertionError.class))
+        expect(() -> expect(this::funcThatThrowsRuntime).toThrowAny().withCause(AssertionError.class))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("AssertionError", "Exception"));
     }
 
     @Test
     public void doesntMatchMissingCauses() {
-        expect(() -> expect(this::funcThatThrows).toThrow().withCause(Exception.class))
+        expect(() -> expect(this::funcThatThrows).toThrowAny().withCause(Exception.class))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("Exception", ""));
+
+        expect(() -> expect(this::funcThatThrows).toThrowAny().withAnyCause())
+            .toThrow(ExpectExceptionError.class)
+            .withMessage(formatForJunit("Throwable", ""));
     }
 
     @Test
     public void doesntMatchAdditionalCauses() {
-        expect(() -> expect(this::funcThatThrowsRuntime).toThrow().withoutCause())
+        expect(() -> expect(this::funcThatThrowsRuntime).toThrowAny().withoutCause())
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("", "Exception"));
     }
@@ -168,7 +182,7 @@ public class ExpectExceptionTest {
 
     @Test
     public void doesntMatchPattern() {
-        expect(() -> expect(this::funcThatThrows).toThrow().withMessage(Pattern.compile("[bad]+")))
+        expect(() -> expect(this::funcThatThrows).toThrowAny().withMessage(Pattern.compile("[bad]+")))
             .toThrow(ExpectExceptionError.class)
             .withMessage(formatForJunit("[bad]+", "my test"));
     }

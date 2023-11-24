@@ -13,6 +13,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 
@@ -36,16 +37,17 @@ public class DeployRestVerticleHelper implements AutoCloseable {
             config.put("http.port", port);
 
             // Start the server
-            Future<Void> future = Future.future();
+            Promise<Void> promise = Promise.promise();
+            Future<Void> future = promise.future();
             vertx = Vertx.vertx();
             DeploymentOptions options = new DeploymentOptions().setConfig(config);
             vertx.deployVerticle(verticleClass.getName(),
                 options,
                 ar -> {
                     if (ar.succeeded())
-                        future.complete();
+                        promise.complete();
                     else
-                        future.fail(ar.cause());
+                        promise.fail(ar.cause());
                 });
 
             await().atMost(5, TimeUnit.SECONDS).until(future::isComplete);

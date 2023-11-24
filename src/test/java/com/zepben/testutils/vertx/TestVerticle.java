@@ -10,49 +10,47 @@ package com.zepben.testutils.vertx;
 
 import com.zepben.annotations.EverythingIsNonnullByDefault;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 
 import java.util.function.Consumer;
-
-;
 
 @SuppressWarnings("WeakerAccess")
 @EverythingIsNonnullByDefault
 public class TestVerticle extends AbstractVerticle {
 
     public static void setOnStart(Runnable onStart) {
-        setOnStart((future) -> {
+        setOnStart((promise) -> {
             onStart.run();
-            future.complete();
+            promise.complete();
         });
     }
 
-    public static void setOnStart(Consumer<Future<Void>> onStart) {
+    public static void setOnStart(Consumer<Promise<Void>> onStart) {
         TestVerticle.onStart = onStart;
     }
 
     public static void setOnStop(Runnable onStop) {
-        setOnStop((future) -> {
+        setOnStop((promise) -> {
             onStop.run();
-            future.complete();
+            promise.complete();
         });
     }
 
-    public static void setOnStop(Consumer<Future<Void>> onStop) {
+    public static void setOnStop(Consumer<Promise<Void>> onStop) {
         TestVerticle.onStop = onStop;
     }
 
-    private static Consumer<Future<Void>> onStart = Future::complete;
-    private static Consumer<Future<Void>> onStop = Future::complete;
+    private static Consumer<Promise<Void>> onStart = Promise::complete;
+    private static Consumer<Promise<Void>> onStop = Promise::complete;
 
     @Override
-    public void start(Future<Void> startFuture) throws Exception {
-        onStart.accept(startFuture);
+    public void start(Promise<Void> startPromise) throws Exception {
+        onStart.accept(startPromise);
     }
 
     @Override
-    public void stop(Future<Void> stopFuture) throws Exception {
-        onStop.accept(stopFuture);
+    public void stop(Promise<Void> stopPromise) throws Exception {
+        onStop.accept(stopPromise);
     }
 
 }

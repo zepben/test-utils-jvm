@@ -3,7 +3,7 @@
 ## [1.3.0] - UNRELEASED
 
 ### Breaking Changes
-* None.
+* Update super pom to 0.34.x, which updates Vert.x version to 4.4.6.
 
 ### New Features
 * None.
@@ -60,4 +60,3 @@
 ## [1.0.0]
 
 Initial release.
-

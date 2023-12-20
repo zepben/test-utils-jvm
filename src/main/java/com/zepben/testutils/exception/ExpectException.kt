@@ -7,10 +7,15 @@
  */
 package com.zepben.testutils.exception
 
-class ExpectException private constructor(val func: RunWithException) {
+class ExpectException private constructor(
+    val func: RunWithException
+) {
+
     fun interface RunWithException {
+
         @Throws(Throwable::class)
         fun run()
+
     }
 
     @Throws(ExpectExceptionError::class)
@@ -18,9 +23,12 @@ class ExpectException private constructor(val func: RunWithException) {
         try {
             func.run()
         } catch (e: Throwable) {
-            if (e is T) return ExceptionMatcher(e)
+            if (e is T)
+                return ExceptionMatcher(e)
+
             throw ExpectExceptionError(T::class.simpleName, e.javaClass.simpleName, e)
         }
+
         throw ExpectExceptionError(T::class.simpleName, "")
     }
 
@@ -32,9 +40,12 @@ class ExpectException private constructor(val func: RunWithException) {
         try {
             func.run()
         } catch (e: Throwable) {
-            if (clazz.isInstance(e)) return ExceptionMatcher(clazz.cast(e))
+            if (clazz.isInstance(e))
+                return ExceptionMatcher(clazz.cast(e))
+
             throw ExpectExceptionError(clazz.simpleName, e.javaClass.simpleName, e)
         }
+
         throw ExpectExceptionError(clazz.simpleName, "")
     }
 
@@ -42,9 +53,12 @@ class ExpectException private constructor(val func: RunWithException) {
     fun toThrowAny(): ExceptionMatcher<Throwable> = toThrow()
 
     companion object {
+
         @JvmStatic
         fun expect(func: RunWithException): ExpectException {
             return ExpectException(func)
         }
+
     }
+
 }

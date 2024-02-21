@@ -1,6 +1,6 @@
 # Test Utils JVM changelog
 
-## [2.0.0] - UNRELEASED
+## [2.0.0] - 2024-02-21
 
 ### Breaking Changes
 

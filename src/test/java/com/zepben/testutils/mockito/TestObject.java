@@ -9,6 +9,7 @@
 package com.zepben.testutils.mockito;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 //
@@ -33,5 +34,8 @@ interface TestObject {
 
     @Nonnull
     List<Integer> integerListFunc2();
+
+    @Nullable
+    TestObject nullableFunc();
 
 }

@@ -57,6 +57,18 @@ class DefaultAnswerTest {
         }
     }
 
+    @Test
+    internal fun `allows nullable default answers`() {
+        // This test is in place because the original Kotlin implementation threw a NullPointerException when the
+        // underlying default answers returned null.
+
+        // Create a default answer replacing something we are not using so our calls use the underlying default answer.
+        mock<TestObject>(DefaultAnswer.of<Double>(0.0)).apply {
+            assertThat(nullableFunc(), nullValue())
+        }
+    }
+
+
     private fun validateMock(
         testObject: TestObject,
         intMatcher: Matcher<Any>,

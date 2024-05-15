@@ -1,20 +1,27 @@
 # Test Utils JVM changelog
+
 ## [2.1.0] - UNRELEASED
+
 ### Breaking Changes
+
 * None.
 
 ### New Features
+
 * None.
 
 ### Enhancements
+
 * None.
 
 ### Fixes
-* None.
+
+* Stopped `DefaultAnswer` from throwing `NullPointerException` for types that have not been supplied that can
+  return `null`.
 
 ### Notes
-* None.
 
+* None.
 
 ## [2.0.0] - 2024-02-21
 

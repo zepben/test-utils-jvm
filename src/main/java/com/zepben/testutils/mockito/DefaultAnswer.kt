@@ -18,7 +18,7 @@ class DefaultAnswer private constructor(
     private val answers: MutableMap<Class<*>, Any> = HashMap()
 
     @Throws(Throwable::class)
-    override fun answer(invocation: InvocationOnMock): Any =
+    override fun answer(invocation: InvocationOnMock): Any? =
         answers[invocation.method.returnType] ?: defaultAnswer.answer(invocation)
 
     inline fun <reified T> and(answer: Any): DefaultAnswer =

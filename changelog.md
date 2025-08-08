@@ -1,6 +1,6 @@
 # Test Utils JVM changelog
 
-## [2.1.0] - UNRELEASED
+## [2.1.0] - 2025-08-08
 
 ### Breaking Changes
 

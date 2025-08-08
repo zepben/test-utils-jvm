@@ -1,0 +1,11 @@
+name: Maven Lib Build 
+
+on: 
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: zepben/.github/.github/workflows/maven-build.yml@main
+    secrets: inherit
+

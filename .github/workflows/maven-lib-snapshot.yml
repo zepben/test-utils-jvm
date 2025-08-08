@@ -5,13 +5,12 @@ on:
     branches:
       - main
       - LTS/*
+      - hotfix/*
   workflow_dispatch:
 
 jobs:
-  run:
+  snapshot:
     uses: zepben/.github/.github/workflows/maven-lib-snapshot.yml@main
     with:
-      private: false
-      product-key: "test-utils-jvm"
-      product-repo: "zepben/test-utils-jvm"
+      private: true
     secrets: inherit

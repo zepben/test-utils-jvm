@@ -3,9 +3,9 @@ name: Maven Library Release
 on: workflow_dispatch
 
 jobs:
-  run:
+  release:
     uses: zepben/.github/.github/workflows/maven-lib-release.yml@main
     with:
-      private: false
-      licencecheck: true
+      private: true
     secrets: inherit
+

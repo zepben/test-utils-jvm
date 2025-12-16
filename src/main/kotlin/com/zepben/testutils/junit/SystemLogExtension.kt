@@ -81,12 +81,10 @@ class SystemLogExtension private constructor(
         initialSettings = logWrapper.settings
     }
 
-    @Throws(Exception::class)
     override fun beforeEach(extensionContext: ExtensionContext) {
         logWrapper.settings = initialSettings
     }
 
-    @Throws(Exception::class)
     override fun afterEach(extensionContext: ExtensionContext) {
         if (extensionContext.executionException.isPresent) logWrapper.failureLog.writeTo(originalStream)
 

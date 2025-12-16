@@ -1,13 +1,13 @@
 # Test Utils JVM changelog
-## [2.2.0] - UNRELEASED
+## [3.0.0] - UNRELEASED
 ### Breaking Changes
-* None.
+* In Kotlin, SystemLogExtension needs to be instantiated inside the companion objects of a test class.
 
 ### New Features
 * None.
 
 ### Enhancements
-* None.
+* SystemLogExtension now correctly mutes all output, even output of objects constructed within a test class but outside a test, if told to do so.
 
 ### Fixes
 * None.

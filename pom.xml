@@ -16,7 +16,7 @@
 
     <groupId>com.zepben</groupId>
     <artifactId>test-utils</artifactId>
-    <version>2.2.0b1</version>
+    <version>3.0.0b1</version>
     <packaging>jar</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Helpers and utils for writing unit tests in various zepben projects.</description>
@@ -49,6 +49,12 @@
         <developer>
             <name>Kurt Greaves</name>
             <email>kurt.greaves@zepben.com</email>
+            <organization>Zeppelin Bend</organization>
+            <organizationUrl>https://zepben.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Ramon Bouckaert</name>
+            <email>ramon.bouckaert@zepben.com</email>
             <organization>Zeppelin Bend</organization>
             <organizationUrl>https://zepben.com</organizationUrl>
         </developer>

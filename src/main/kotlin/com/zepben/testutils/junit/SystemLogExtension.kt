@@ -7,7 +7,9 @@
  */
 package com.zepben.testutils.junit
 
+import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.ByteArrayOutputStream
@@ -27,42 +29,7 @@ import java.util.function.Consumer
 class SystemLogExtension private constructor(
     private val originalStream: PrintStream,
     private val streamReplacer: Consumer<PrintStream>
-) : BeforeEachCallback, AfterEachCallback {
-
-    private val logWrapper: LogWrapper = LogWrapper(originalStream)
-
-    fun clearCapturedLog(): SystemLogExtension {
-        logWrapper.captureLog.reset()
-        return this
-    }
-
-    fun captureLog(): SystemLogExtension {
-        logWrapper.captureLogEnabled = true
-        return this
-    }
-
-    fun stopCapturingLog(): SystemLogExtension {
-        logWrapper.captureLogEnabled = false
-        return this
-    }
-
-    fun mute(): SystemLogExtension {
-        logWrapper.originalStreamEnabled = false
-        logWrapper.failureLogEnabled = false
-        return this
-    }
-
-    fun unmute(): SystemLogExtension {
-        logWrapper.originalStreamEnabled = true
-        logWrapper.failureLogEnabled = false
-        return this
-    }
-
-    fun muteOnSuccess(): SystemLogExtension {
-        mute()
-        logWrapper.failureLogEnabled = true
-        return this
-    }
+) : BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback {
 
     val log: String
         get() = logWrapper.captureLog.toString(Charset.defaultCharset())
@@ -71,35 +38,87 @@ class SystemLogExtension private constructor(
         get() =
             log.split(System.lineSeparator()).dropLastWhile { it.isBlank() }.toTypedArray()
 
+    private val logWrapper: LogWrapper = LogWrapper(originalStream)
+    private lateinit var initialSettings: LogWrapperSettings
+
+    init {
+        streamReplacer.accept(PrintStream(logWrapper, true, Charset.defaultCharset()))
+    }
+
+    fun clearCapturedLog(): SystemLogExtension {
+        logWrapper.captureLog.reset()
+        return this
+    }
+
+    fun captureLog(): SystemLogExtension {
+        logWrapper.settings = logWrapper.settings.copy(captureLogEnabled = true)
+        return this
+    }
+
+    fun stopCapturingLog(): SystemLogExtension {
+        logWrapper.settings = logWrapper.settings.copy(captureLogEnabled = false)
+        return this
+    }
+
+    fun mute(): SystemLogExtension {
+        logWrapper.settings = logWrapper.settings.copy(originalStreamEnabled = false, failureLogEnabled = false)
+        return this
+    }
+
+    fun unmute(): SystemLogExtension {
+        logWrapper.settings = logWrapper.settings.copy(originalStreamEnabled = true, failureLogEnabled = false)
+        return this
+    }
+
+    fun muteOnSuccess(): SystemLogExtension {
+        mute()
+        logWrapper.settings = logWrapper.settings.copy(failureLogEnabled = true)
+        return this
+    }
+
+    override fun beforeAll(extensionContext: ExtensionContext) {
+        streamReplacer.accept(PrintStream(logWrapper, true, Charset.defaultCharset()))
+        initialSettings = logWrapper.settings
+    }
+
     @Throws(Exception::class)
     override fun beforeEach(extensionContext: ExtensionContext) {
-        streamReplacer.accept(PrintStream(logWrapper, true, Charset.defaultCharset()))
+        logWrapper.settings = initialSettings
     }
 
     @Throws(Exception::class)
     override fun afterEach(extensionContext: ExtensionContext) {
-        streamReplacer.accept(originalStream)
         if (extensionContext.executionException.isPresent) logWrapper.failureLog.writeTo(originalStream)
+
+        logWrapper.settings = initialSettings
+
         logWrapper.failureLog.reset()
         logWrapper.captureLog.reset()
     }
 
+    override fun afterAll(extensionContext: ExtensionContext) {
+        logWrapper.settings = initialSettings
+        streamReplacer.accept(originalStream)
+    }
+
     private class LogWrapper(
-        val originalStream: OutputStream
+        val originalStream: OutputStream,
     ) : OutputStream() {
 
         val failureLog = ByteArrayOutputStream()
         val captureLog = ByteArrayOutputStream()
 
-        var originalStreamEnabled = true
-        var failureLogEnabled = false
-        var captureLogEnabled = false
+        var settings = LogWrapperSettings(
+            originalStreamEnabled = true,
+            captureLogEnabled = false,
+            failureLogEnabled = false
+        )
 
         @Throws(IOException::class)
         override fun write(b: Int) {
-            if (originalStreamEnabled) originalStream.write(b)
-            if (failureLogEnabled) failureLog.write(b)
-            if (captureLogEnabled) captureLog.write(b)
+            if (settings.originalStreamEnabled) originalStream.write(b)
+            if (settings.failureLogEnabled) failureLog.write(b)
+            if (settings.captureLogEnabled) captureLog.write(b)
         }
 
         @Throws(IOException::class)
@@ -115,6 +134,12 @@ class SystemLogExtension private constructor(
         }
 
     }
+
+    private data class LogWrapperSettings(
+        val originalStreamEnabled: Boolean,
+        val captureLogEnabled: Boolean,
+        val failureLogEnabled: Boolean
+    )
 
     companion object {
 

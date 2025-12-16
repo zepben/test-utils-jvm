@@ -1,5 +1,5 @@
 # Test Utils JVM changelog
-## [3.0.0] - UNRELEASED
+## [3.0.0] - 2025-12-16
 ### Breaking Changes
 * In Kotlin, SystemLogExtension needs to be instantiated inside the companion objects of a test class.
 

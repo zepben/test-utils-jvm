@@ -1,7 +1,7 @@
 # Test Utils JVM changelog
 ## [3.2.0] - UNRELEASED
 ### Breaking Changes
-* None.
+* This project requires JVM 17 to compile
 
 ### New Features
 * None.
@@ -13,7 +13,7 @@
 * None.
 
 ### Notes
-* None.
+* Updated Kotlin from `1.9.24` to `2.3.20`
 
 ## [3.1.0] - 2026-03-18
 ### Breaking Changes

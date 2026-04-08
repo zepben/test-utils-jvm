@@ -1,4 +1,20 @@
 # Test Utils JVM changelog
+## [3.3.0] - UNRELEASED
+### Breaking Changes
+* None.
+
+### New Features
+* None.
+
+### Enhancements
+* None.
+
+### Fixes
+* None.
+
+### Notes
+* None.
+
 ## [3.2.0] - 2026-04-08
 ### Breaking Changes
 * This project requires JVM 17 to compile

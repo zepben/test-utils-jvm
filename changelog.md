@@ -1,5 +1,5 @@
 # Test Utils JVM changelog
-## [3.2.0] - UNRELEASED
+## [3.2.0] - 2026-04-08
 ### Breaking Changes
 * This project requires JVM 17 to compile
 

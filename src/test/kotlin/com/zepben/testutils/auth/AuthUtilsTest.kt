@@ -8,13 +8,21 @@
 
 package com.zepben.testutils.auth
 
+import com.zepben.testutils.junit.SystemLogExtension
 import io.grpc.Metadata
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 class AuthUtilsTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
+    }
 
     @Test
     fun testMockServerCall() {
@@ -44,4 +52,5 @@ class AuthUtilsTest {
         assertThat(mm.stream(0), nullValue())
         assertThat(mm.parse(null), nullValue())
     }
+
 }

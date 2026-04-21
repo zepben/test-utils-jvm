@@ -8,17 +8,24 @@
 package com.zepben.testutils.hamcrest
 
 import com.zepben.testutils.hamcrest.InputStreamMatcher.Companion.matchesContent
+import com.zepben.testutils.junit.SystemLogExtension
 import org.hamcrest.Description
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.*
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
 class InputStreamMatcherTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
+    }
 
     private val matcher1 = matchesContent("matches one")
     private val matcher2 = matchesContent("matches two")
@@ -41,10 +48,10 @@ class InputStreamMatcherTest {
 
         matcher1.describeTo(description)
 
-        verify(description, times(1)).appendText(ArgumentMatchers.any())
+        verify(description, times(1)).appendText(any())
         verify(description, times(1)).appendText("InputStream containing ")
 
-        verify(description, times(1)).appendValue(ArgumentMatchers.any())
+        verify(description, times(1)).appendValue(any())
         verify(description, times(1)).appendValue("matches one")
     }
 
@@ -54,10 +61,10 @@ class InputStreamMatcherTest {
 
         matcher1.describeMismatchSafely(inputStreamOf("other stream"), description)
 
-        verify(description, times(1)).appendText(ArgumentMatchers.any())
+        verify(description, times(1)).appendText(any())
         verify(description, times(1)).appendText(" was ")
 
-        verify(description, times(1)).appendValue(ArgumentMatchers.any())
+        verify(description, times(1)).appendValue(any())
         verify(description, times(1)).appendValue("other stream")
     }
 

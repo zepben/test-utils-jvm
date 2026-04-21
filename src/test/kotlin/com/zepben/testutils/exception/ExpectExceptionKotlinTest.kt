@@ -8,14 +8,23 @@
 package com.zepben.testutils.exception
 
 import com.zepben.testutils.exception.ExpectException.Companion.expect
+import com.zepben.testutils.junit.SystemLogExtension
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.IOException
 import java.security.InvalidKeyException
 import java.util.regex.Pattern
 
 class ExpectExceptionKotlinTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
+    }
+
     @Test
     fun catchesAny() {
         expect { funcThatThrows() }.toThrowAny()
@@ -193,4 +202,5 @@ class ExpectExceptionKotlinTest {
     private fun funcThatThrowsBlank() {
         throw IOException("")
     }
+
 }

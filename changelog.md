@@ -4,7 +4,8 @@
 * None.
 
 ### New Features
-* None.
+* Added `TestClassValidator`, which should be used by all repos to validate their tests are configured correctly by
+  creating a test and calling `TestClassValidator.validate`.
 
 ### Enhancements
 * None.
@@ -56,7 +57,8 @@
 * None.
 
 ### Enhancements
-* SystemLogExtension now correctly mutes all output, even output of objects constructed within a test class but outside a test, if told to do so.
+* SystemLogExtension now correctly mutes all output, even output of objects constructed within a test class but outside
+  a test, if told to do so.
 
 ### Fixes
 * None.

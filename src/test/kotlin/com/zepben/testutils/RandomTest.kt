@@ -7,18 +7,26 @@
  */
 package com.zepben.testutils
 
+import com.zepben.testutils.junit.SystemLogExtension
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 
 class RandomTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
+    }
 
     @Test
     fun coverage() {
         assertThat(Random.ofEnum(TestEnum::class.java), any(TestEnum::class.java))
         assertThat(
             Random.ofEnum(TestEnum::class.java),
-            anyOf(equalTo(TestEnum.A), equalTo(TestEnum.B), equalTo(TestEnum.C))
+            anyOf(equalTo(TestEnum.A), equalTo(TestEnum.B), equalTo(TestEnum.C)),
         )
 
         assertThat(Random.ofEnum<TestEnum>(), any(TestEnum::class.java))

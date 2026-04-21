@@ -7,13 +7,21 @@
  */
 package com.zepben.testutils.mockito
 
+import com.zepben.testutils.junit.SystemLogExtension
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.mock
 
 class DefaultAnswerTest {
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
+    }
 
     @Test
     fun changesDefaultAnswers() {
@@ -51,7 +59,7 @@ class DefaultAnswerTest {
         // Should only provide defaults for both primitive and boxed ints.
         mock(
             TestObject::class.java,
-            DefaultAnswer.of(Int::class.javaPrimitiveType!!, 100).and(Int::class.javaObjectType, 200)
+            DefaultAnswer.of(Int::class.javaPrimitiveType!!, 100).and(Int::class.javaObjectType, 200),
         ).also {
             validateMock(it, equalTo(100), equalTo(200))
         }
@@ -73,7 +81,7 @@ class DefaultAnswerTest {
         testObject: TestObject,
         intMatcher: Matcher<Any>,
         integerMatcher: Matcher<Any>,
-        vararg listValues: Int
+        vararg listValues: Int,
     ) {
         assertThat(testObject.intFunc1(), intMatcher)
         assertThat(testObject.intFunc2(), intMatcher)

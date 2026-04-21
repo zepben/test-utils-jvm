@@ -1,5 +1,5 @@
 # Test Utils JVM changelog
-## [3.3.0] - UNRELEASED
+## [3.3.0] - 2026-04-21
 ### Breaking Changes
 * None.
 

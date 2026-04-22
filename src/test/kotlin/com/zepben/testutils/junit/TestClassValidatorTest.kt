@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.util.regex.Pattern
 
+@Suppress("RegExpRepeatedSpace")
 class TestClassValidatorTest {
 
     companion object {
@@ -23,16 +24,15 @@ class TestClassValidatorTest {
 
     //
     // NOTE: The expected number of extensions detected in the `data` classes designed for testing. You might expect
-    //       4 and 8, but they are only captured for classes with valid `@Test` methods, so we miss the incorrect
-    //       annotation, and outer class of the non-static test.
+    //       2 and 8, but we can only get the field values from static members, so the non-static one is skipped.
     //
-    private val expectedSystemErrInData = 3
-    private val expectedSystemOutInData = 6
+    private val expectedSystemErrInData = 2
+    private val expectedSystemOutInData = 7
 
     @Test
     internal fun `detects all the things we are worried about`() {
         //
-        // NOTE: The `WithNonStaticLogExtensionTest` uses `WithNonStaticLogExtensionTest.Inner` because it needed to be
+        // NOTE: The `WithNonStaticLogExtensionTest` uses `WithNonStaticAndMultipleLogExtensionTest` because it needed to be
         //       `@Nested` to avoid potential for `lateinit` errors when using the `SystemLogExtension` in a non-static
         //       context.
         //
@@ -51,13 +51,28 @@ class TestClassValidatorTest {
 
                         Tests with incorrect `Test` annotations: \[WithInvalidTestAnnotationTest],
                         Tests with unregistered `SystemLogExtension`: \[WithUnregisteredLogExtensionTest],
-                        Tests with missing `SystemLogExtension`: \[WithoutLogExtensionTest],
-                        Tests with extra `SystemLogExtension`: \[WithMultipleLogExtensionTest],
-                        Tests with non-static `SystemLogExtension`: \[WithNonStaticLogExtensionTest.Inner],
+                        Tests with missing `SystemLogExtension`: \[${
+                        inAnyOrder(
+                            "WithoutLogExtensionTest",
+                            "WithNestedClassWithoutLogExtensionTests",
+                        )
+                    }],
+                        Tests with extra `SystemLogExtension`: \[WithNonStaticAndMultipleLogExtensionTest],
+                        Tests with non-static `SystemLogExtension`: \[WithNonStaticAndMultipleLogExtensionTest],
                         Tests with non-final `SystemLogExtension`: \[WithNonFinalLogExtensionTest],
-                        Tests with incorrectly named `SystemLogExtension` variables: \[(WithIncorrectlyNamedErrLogExtensionTest.systemErrRule, WithIncorrectlyNamedOutLogExtensionTest.systemOutRule|WithIncorrectlyNamedOutLogExtensionTest.systemOutRule, WithIncorrectlyNamedErrLogExtensionTest.systemErrRule)],
+                        Tests with incorrectly named `SystemLogExtension` variables: \[${
+                        inAnyOrder(
+                            "WithIncorrectlyNamedErrLogExtensionTest.systemErrRule",
+                            "WithIncorrectlyNamedOutLogExtensionTest.systemOutRule",
+                        )
+                    }],
 
-                        Should all be using the same `SystemLogExtension` type: \{(SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData}, SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData}|SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData}, SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData})}
+                        Should all be using the same `SystemLogExtension` type: \{${
+                        inAnyOrder(
+                            "SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData}",
+                            "SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData}",
+                        )
+                    }}
                     """.trimIndent(),
                 ),
             )
@@ -69,17 +84,29 @@ class TestClassValidatorTest {
             TestClassValidator.validate(packageName = "com.zepben.testutils.junit.data", allowMultiLogExtensions = true)
         }.toThrow<AssertionError>()
             .withMessage(
-                """
-                    Malformed test classes detected:
+                Pattern.compile(
+                    """
+                        Malformed test classes detected:
 
-                    Tests with incorrect `Test` annotations: [WithInvalidTestAnnotationTest],
-                    Tests with unregistered `SystemLogExtension`: [WithUnregisteredLogExtensionTest],
-                    Tests with missing `SystemLogExtension`: [WithoutLogExtensionTest],
-                    Tests with extra `SystemLogExtension`: [],
-                    Tests with non-static `SystemLogExtension`: [WithNonStaticLogExtensionTest.Inner],
-                    Tests with non-final `SystemLogExtension`: [WithNonFinalLogExtensionTest],
-                    Tests with incorrectly named `SystemLogExtension` variables: [WithIncorrectlyNamedErrLogExtensionTest.systemErrRule, WithIncorrectlyNamedOutLogExtensionTest.systemOutRule],
-                """.trimIndent(),
+                        Tests with incorrect `Test` annotations: \[WithInvalidTestAnnotationTest],
+                        Tests with unregistered `SystemLogExtension`: \[WithUnregisteredLogExtensionTest],
+                        Tests with missing `SystemLogExtension`: \[${
+                        inAnyOrder(
+                            "WithoutLogExtensionTest",
+                            "WithNestedClassWithoutLogExtensionTests",
+                        )
+                    }],
+                        Tests with extra `SystemLogExtension`: \[],
+                        Tests with non-static `SystemLogExtension`: \[WithNonStaticAndMultipleLogExtensionTest],
+                        Tests with non-final `SystemLogExtension`: \[WithNonFinalLogExtensionTest],
+                        Tests with incorrectly named `SystemLogExtension` variables: \[${
+                        inAnyOrder(
+                            "WithIncorrectlyNamedErrLogExtensionTest.systemErrRule",
+                            "WithIncorrectlyNamedOutLogExtensionTest.systemOutRule",
+                        )
+                    }],
+                    """.trimIndent(),
+                ),
             )
     }
 
@@ -109,16 +136,49 @@ class TestClassValidatorTest {
 
                         Tests with incorrect `Test` annotations: \[WithInvalidTestAnnotationTest],
                         Tests with unregistered `SystemLogExtension`: \[WithUnregisteredLogExtensionTest],
-                        Tests with missing `SystemLogExtension`: \[WithoutLogExtensionTest],
-                        Tests with extra `SystemLogExtension`: \[(WithMultipleLogExtensionTest, SystemLogExtensionTest|SystemLogExtensionTest, WithMultipleLogExtensionTest)],
-                        Tests with non-static `SystemLogExtension`: \[WithNonStaticLogExtensionTest.Inner],
+                        Tests with missing `SystemLogExtension`: \[${
+                        inAnyOrder(
+                            "WithoutLogExtensionTest",
+                            "WithNestedClassWithoutLogExtensionTests",
+                        )
+                    }],
+                        Tests with extra `SystemLogExtension`: \[${
+                        inAnyOrder(
+                            "WithNonStaticAndMultipleLogExtensionTest",
+                            "SystemLogExtensionTest",
+                        )
+                    }],
+                        Tests with non-static `SystemLogExtension`: \[WithNonStaticAndMultipleLogExtensionTest],
                         Tests with non-final `SystemLogExtension`: \[WithNonFinalLogExtensionTest],
-                        Tests with incorrectly named `SystemLogExtension` variables: \[(WithIncorrectlyNamedErrLogExtensionTest.systemErrRule, WithIncorrectlyNamedOutLogExtensionTest.systemOutRule|WithIncorrectlyNamedOutLogExtensionTest.systemOutRule, WithIncorrectlyNamedErrLogExtensionTest.systemErrRule)],
+                        Tests with incorrectly named `SystemLogExtension` variables: \[${
+                        inAnyOrder(
+                            "WithIncorrectlyNamedErrLogExtensionTest.systemErrRule",
+                            "WithIncorrectlyNamedOutLogExtensionTest.systemOutRule",
+                        )
+                    }],
 
-                        Should all be using the same `SystemLogExtension` type: \{(SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData + 1}, SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData + 2}|SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData + 2}, SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData + 1})}
+                        Should all be using the same `SystemLogExtension` type: \{${
+                        inAnyOrder(
+                            "SystemLogExtension.SYSTEM_ERR=${expectedSystemErrInData + 1}",
+                            "SystemLogExtension.SYSTEM_OUT=${expectedSystemOutInData + 2}",
+                        )
+                    }}
                     """.trimIndent(),
                 ),
             )
     }
 
+    private fun inAnyOrder(vararg values: String): String =
+        values.toList()
+            .permutations()
+            .joinToString(separator = "|", prefix = "(", postfix = ")") {
+                // Join the inner list with ", "
+                it.joinToString()
+            }
+
+    fun <T> List<T>.permutations(): List<List<T>> =
+        when {
+            isEmpty() -> listOf(emptyList())
+            else -> flatMap { item -> (this - item).permutations().map { listOf(item) + it } }
+        }
 }

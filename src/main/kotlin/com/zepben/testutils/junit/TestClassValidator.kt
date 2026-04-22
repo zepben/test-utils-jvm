@@ -43,8 +43,12 @@ object TestClassValidator {
         excludingPackages: Set<String> = emptySet(),
         allowMultiLogExtensions: Boolean = false,
     ) {
+        //
+        // NOTE: We need to filter for the files in this project only to prevent `NoClassDefFoundError` errors, which
+        //       occurefasdfg when.
+        //
         val testClassDetails =
-            ClassPath.from(ClassLoader.getSystemClassLoader()).allClasses
+            ClassPath.from(ClassLoader.getSystemClassLoader()).getTopLevelClassesRecursive(packageName)
                 .asSequence()
                 .filter { it.name.startsWith(packageName) }
                 .filterNot { excludingPackages.any { exclude -> it.name.startsWith(exclude) } }
@@ -79,6 +83,7 @@ object TestClassValidator {
 
         val systemLogExtensionByType =
             testClassDetails.flatMap { details -> details.systemLogExtensions.map { details to it } }
+                // We can only get the field without an object if it is static.
                 .filter { (_, field) -> Modifier.isStatic(field.modifiers) }
                 .groupBy { (_, field) ->
                     field.trySetAccessible()
@@ -135,13 +140,19 @@ object TestClassValidator {
     ) {
 
         val testMethods: List<Method> by lazy {
-            clazz.declaredMethods.filter { method ->
-                method.annotations.any { it.annotationClass.simpleName == "Test" }
-            }
+            sequenceOf<Class<*>>(clazz, *clazz.classes)
+                .flatMap { it.declaredMethods.asSequence() }
+                .filter { method ->
+                    method.annotations.any { it.annotationClass.simpleName == "Test" }
+                }
+                .toList()
         }
 
         val systemLogExtensions: List<Field> by lazy {
-            clazz.declaredFields.filter { field -> field.type == SystemLogExtension::class.java }
+            sequenceOf<Class<*>>(clazz, *clazz.classes)
+                .flatMap { it.declaredFields.asSequence() }
+                .filter { field -> field.type == SystemLogExtension::class.java }
+                .toList()
         }
 
         override fun toString(): String = clazz.canonicalName.removePrefix(clazz.packageName).removePrefix(".")

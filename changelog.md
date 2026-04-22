@@ -1,19 +1,8 @@
 # Test Utils JVM changelog
-## [3.4.0] - UNRELEASED
-### Breaking Changes
-* None.
-
-### New Features
-* None.
-
-### Enhancements
-* None.
-
+## [3.3.1] - UNRELEASED
 ### Fixes
-* None.
-
-### Notes
-* None.
+* Fixed errors in the `TestClassValidator` with detection and validation of inner/nested test classes and their log
+  extensions.
 
 ## [3.3.0] - 2026-04-21
 ### Breaking Changes

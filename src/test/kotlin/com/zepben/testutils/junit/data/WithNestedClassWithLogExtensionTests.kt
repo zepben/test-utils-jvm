@@ -15,7 +15,12 @@ import org.junit.jupiter.api.extension.RegisterExtension
 
 // Used via the class loader in `TestClassValidator`.
 @Suppress("unused")
-internal class WithNonStaticLogExtensionTest {
+internal class WithNestedClassWithLogExtensionTests {
+
+    //
+    // NOTE: This is a valid test class with only tests in the inner class. This is used to ensure
+    //       valid configurations of inner classes aren't logged.
+    //
 
     companion object {
         @JvmField
@@ -23,23 +28,13 @@ internal class WithNonStaticLogExtensionTest {
         val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
     }
 
-    /**
-     * NOTE: We mark this as an inner/nested test to ensure we have at least one static copy of the log extension. If
-     *       we didn't do this, we run the risk of this being the first test run and failing the lateinit property
-     *       check in the extension.
-     */
     @Nested
     inner class Inner {
-
-        // NOTE: Deliberately non-static for testing purposes.
-        @JvmField
-        @RegisterExtension
-        @Suppress("JUnitMalformedDeclaration")
-        val systemOut: SystemLogExtension = SystemLogExtension.SYSTEM_OUT.captureLog().muteOnSuccess()
 
         @Test
         internal fun `mark as test class`() {
         }
+
     }
 
 }

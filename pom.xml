@@ -11,7 +11,7 @@
     <parent>
         <groupId>com.zepben.maven</groupId>
         <artifactId>evolve-super-pom</artifactId>
-        <version>0.48.0</version>
+        <version>0.51.0</version>
     </parent>
 
     <groupId>com.zepben</groupId>
@@ -104,6 +104,11 @@
             <version>${mockito.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk-testing</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -120,6 +125,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-check</id>
+                        <!-- Exclude inline functions. These functions report zero coverage even when called, as they
+                             are inlined into the callers body. -->
+                        <configuration>
+                            <excludes>
+                                <exclude>com/zepben/testutils/metrics/MetricsCaptureKt*.class</exclude>
+                                <exclude>com/zepben/testutils/metrics/TestMetricsCaptureKt.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

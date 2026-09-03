@@ -4,7 +4,10 @@
 * None.
 
 ### New Features
-* None.
+* Added OpenTelemetry metric testing functionality. 
+  * Added `withCapturedMetrics` function for capturing metrics in tests.
+  * Added `sumsTo` and `containsDatapoints` matchers for matching on metrics.
+  * Added `MetricsCapture` interface for test environments that capture metrics.
 
 ### Enhancements
 * None.

@@ -126,6 +126,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-check</id>
+                        <!-- Exclude inline functions. These functions report zero coverage even when called, as they
+                             are inlined into the callers body. -->
+                        <configuration>
+                            <excludes>
+                                <exclude>com/zepben/testutils/metrics/MetricsCaptureKt*.class</exclude>
+                                <exclude>com/zepben/testutils/metrics/TestMetricsCaptureKt.class</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

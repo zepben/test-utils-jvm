@@ -25,8 +25,7 @@ class TestMetricsCapture : MetricsCapture, AutoCloseable {
 /**
  * Run the [block] while capturing metrics.
  *
- * Captured metrics are accessible via [com.zepben.testutils.metrics.withMetric] or
- * [com.zepben.testutils.metrics.withMetricData].
+ * Captured metrics are accessible via [com.zepben.testutils.metrics.withMetric].
  *
  * > **NOTE:** Only metrics created inside the [block] will have their metrics captured.
  */

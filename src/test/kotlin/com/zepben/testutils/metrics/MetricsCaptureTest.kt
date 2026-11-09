@@ -12,12 +12,6 @@ import com.zepben.testutils.exception.ExpectException.Companion.expect
 import com.zepben.testutils.junit.SystemLogExtension
 import com.zepben.testutils.metrics.extensions.values
 import io.opentelemetry.api.GlobalOpenTelemetry
-import io.opentelemetry.sdk.metrics.data.Data
-import io.opentelemetry.sdk.metrics.data.DoublePointData
-import io.opentelemetry.sdk.metrics.data.GaugeData
-import io.opentelemetry.sdk.metrics.data.HistogramData
-import io.opentelemetry.sdk.metrics.data.LongPointData
-import io.opentelemetry.sdk.metrics.data.SumData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Test
@@ -45,97 +39,10 @@ class MetricsCaptureTest {
     }
 
     @Test
-    fun `withMetricData extracts data`() = withCapturedMetrics {
-        val requests = GlobalOpenTelemetry
-            .getMeter("scope")
-            .counterBuilder("requests")
-            .build()
-
-        requests.add(3)
-
-        withMetricData<SumData<LongPointData>>("requests", "scope") {
-            assertThat(it.values, containsInAnyOrder(3))
-        }
-    }
-
-    @Test
-    fun `withMetricData extracts double gauge data`() = withCapturedMetrics {
-        GlobalOpenTelemetry
-            .getMeter("scope")
-            .gaugeBuilder("temperature")
-            .build()
-            .set(21.5)
-
-        withMetricData<GaugeData<DoublePointData>>("temperature", "scope") {
-            assertThat(it.values, containsInAnyOrder(21.5))
-        }
-    }
-
-    @Test
     fun `withMetric on missing metric is error`() = withCapturedMetrics {
         expect {
             withMetric("my_metric") { }
         }.toThrow<NoSuchElementException>()
-    }
-
-    @Test
-    fun `withMetricData on wrong data type`() = withCapturedMetrics {
-        val requests = GlobalOpenTelemetry
-            .getMeter("scope")
-            .counterBuilder("requests")
-            .build()
-
-        requests.add(3)
-
-        expect {
-            withMetricData<HistogramData>("requests") { }
-        }.toThrow<IllegalArgumentException>()
-            .withMessage("The metric `requests` has data type LONG_SUM. Expected `HISTOGRAM`.")
-    }
-
-    @Test
-    fun `withMetricData on wrong point type`() = withCapturedMetrics {
-        val requests = GlobalOpenTelemetry
-            .getMeter("scope")
-            .counterBuilder("requests")
-            .build()
-
-        requests.add(3)
-
-        expect {
-            withMetricData<SumData<DoublePointData>>("requests") { }
-        }.toThrow<IllegalArgumentException>()
-            .withMessage("The metric `requests` has data type LONG_SUM. Expected `DOUBLE_SUM`.")
-    }
-
-    @Test
-    fun `withMetricData on star projected data type is error`() = withCapturedMetrics {
-        val requests = GlobalOpenTelemetry
-            .getMeter("scope")
-            .counterBuilder("requests")
-            .build()
-
-        requests.add(3)
-
-        expect {
-            withMetricData<SumData<*>>("requests") { }
-        }.toThrow<IllegalArgumentException>()
-            .withMessage("Unsupported metric data type `SumData<*>`.")
-    }
-
-    @Test
-    fun `withMetricData on unknown data type is error`() = withCapturedMetrics {
-        val requests = GlobalOpenTelemetry
-            .getMeter("scope")
-            .counterBuilder("requests")
-            .build()
-
-        requests.add(3)
-
-        expect {
-            withMetricData<Data<*>>("requests") { }
-        }.toThrow<IllegalArgumentException>()
-            .withMessage("Unsupported metric data type `Data<*>`.")
     }
 
     @Test

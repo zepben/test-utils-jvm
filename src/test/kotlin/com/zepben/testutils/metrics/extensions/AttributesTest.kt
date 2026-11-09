@@ -10,12 +10,10 @@ package com.zepben.testutils.metrics.extensions
 
 import com.zepben.testutils.junit.SystemLogExtension
 import com.zepben.testutils.metrics.withCapturedMetrics
-import com.zepben.testutils.metrics.withMetricData
+import com.zepben.testutils.metrics.withMetric
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
-import io.opentelemetry.sdk.metrics.data.LongPointData
-import io.opentelemetry.sdk.metrics.data.SumData
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -38,8 +36,8 @@ class AttributesTest {
 
         users.add(1, Attributes.of(AttributeKey.stringKey("password"), "12345678"))
 
-        withMetricData<SumData<LongPointData>>("users") {
-            assertThat(it.attributes, equalTo(listOf(Attributes.of(AttributeKey.stringKey("password"), "12345678"))))
+        withMetric("users") {
+            assertThat(it.longSumData.attributes, equalTo(listOf(Attributes.of(AttributeKey.stringKey("password"), "12345678"))))
         }
     }
 

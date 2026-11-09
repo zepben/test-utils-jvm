@@ -10,6 +10,7 @@ package com.zepben.testutils.metrics
 
 import com.zepben.testutils.exception.ExpectException.Companion.expect
 import com.zepben.testutils.junit.SystemLogExtension
+import com.zepben.testutils.metrics.extensions.values
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.sdk.metrics.data.Data
 import io.opentelemetry.sdk.metrics.data.DoublePointData
@@ -36,10 +37,10 @@ class MetricsCaptureTest {
         GlobalOpenTelemetry.getMeter("second.scope").counterBuilder("requests").build().add(5)
 
         withMetric("requests", "first.scope") {
-            assertThat(it.longSumData.points.map { point -> point.value }, containsInAnyOrder(3))
+            assertThat(it.longSumData.values, containsInAnyOrder(3))
         }
         withMetric("requests", "second.scope") {
-            assertThat(it.longSumData.points.map { point -> point.value }, containsInAnyOrder(5))
+            assertThat(it.longSumData.values, containsInAnyOrder(5))
         }
     }
 
@@ -53,7 +54,7 @@ class MetricsCaptureTest {
         requests.add(3)
 
         withMetricData<SumData<LongPointData>>("requests", "scope") {
-            assertThat(it.points.map { point -> point.value }, containsInAnyOrder(3))
+            assertThat(it.values, containsInAnyOrder(3))
         }
     }
 
@@ -66,7 +67,7 @@ class MetricsCaptureTest {
             .set(21.5)
 
         withMetricData<GaugeData<DoublePointData>>("temperature", "scope") {
-            assertThat(it.points.map { point -> point.value }, containsInAnyOrder(21.5))
+            assertThat(it.values, containsInAnyOrder(21.5))
         }
     }
 

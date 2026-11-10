@@ -9,36 +9,29 @@
 package com.zepben.testutils.metrics
 
 import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.metrics.SdkMeterProvider
 import io.opentelemetry.sdk.metrics.data.MetricData
 import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
-import io.opentelemetry.sdk.common.Clock
-import io.opentelemetry.sdk.metrics.data.Data
-import io.opentelemetry.sdk.metrics.data.DoublePointData
-import io.opentelemetry.sdk.metrics.data.ExponentialHistogramData
-import io.opentelemetry.sdk.metrics.data.GaugeData
-import io.opentelemetry.sdk.metrics.data.HistogramData
-import io.opentelemetry.sdk.metrics.data.LongPointData
-import io.opentelemetry.sdk.metrics.data.MetricDataType
-import io.opentelemetry.sdk.metrics.data.SumData
-import io.opentelemetry.sdk.metrics.data.SummaryData
 import io.opentelemetry.sdk.testing.time.TestClock
-import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 
-interface MetricsCapture {
+interface MetricsCapture: AutoCloseable {
 
     val clock: TestClock
     val metricsReader: InMemoryMetricReader
 
+    /**
+     * The instance of [OpenTelemetry] that is being captured.
+     */
+    val openTelemetry: OpenTelemetrySdk
+
     companion object {
         /**
-         * Create an [InMemoryMetricReader]. This clears any existing metrics reader, creates a new reader, and sets it
-         * as the global metric provider.
+         * Create a [MetricsCapture]. This clears any existing metrics reader, creates a new reader, and sets it as the
+         * global metric provider.
          */
-        fun createReader(clock: Clock): InMemoryMetricReader {
+        fun create(clock: TestClock = TestClock.create()): MetricsCapture {
             GlobalOpenTelemetry.resetForTest()
 
             val metricReader = InMemoryMetricReader.create()
@@ -47,8 +40,17 @@ interface MetricsCapture {
 
             GlobalOpenTelemetry.set(openTelemetry)
 
-            return metricReader
+            return object : MetricsCapture {
+                override val clock: TestClock = clock
+                override val metricsReader: InMemoryMetricReader = metricReader
+                override val openTelemetry: OpenTelemetrySdk = openTelemetry
+            }
         }
+    }
+
+    override fun close() {
+        metricsReader.close()
+        openTelemetry.close()
     }
 }
 

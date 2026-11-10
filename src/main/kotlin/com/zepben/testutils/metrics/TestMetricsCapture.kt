@@ -9,21 +9,10 @@
 package com.zepben.testutils.metrics
 
 import io.opentelemetry.api.GlobalOpenTelemetry
-import io.opentelemetry.sdk.testing.exporter.InMemoryMetricReader
-import io.opentelemetry.sdk.testing.time.TestClock
-import java.lang.AutoCloseable
-
-class TestMetricsCapture : MetricsCapture, AutoCloseable {
-    override val clock: TestClock = TestClock.create()
-    override val metricsReader: InMemoryMetricReader = MetricsCapture.createReader(clock)
-
-    override fun close() {
-        metricsReader.close()
-    }
-}
 
 /**
- * Run the [block] while capturing metrics.
+ * Run the [block] while capturing metrics. An instance of `OpenTelemetry` is available by `GlobalOpenTelemetry.get()`,
+ * or `openTelemetry` for dependency injection.
  *
  * Captured metrics are accessible via [com.zepben.testutils.metrics.withMetric].
  *
@@ -31,7 +20,7 @@ class TestMetricsCapture : MetricsCapture, AutoCloseable {
  */
 inline fun withCapturedMetrics(block: MetricsCapture.() -> Unit) {
     try {
-        TestMetricsCapture().use { it.block() }
+        MetricsCapture.create().use { it.block() }
     } finally {
         GlobalOpenTelemetry.resetForTest()
     }

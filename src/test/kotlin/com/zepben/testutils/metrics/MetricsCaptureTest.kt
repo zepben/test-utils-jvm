@@ -12,6 +12,7 @@ import com.zepben.testutils.exception.ExpectException.Companion.expect
 import com.zepben.testutils.junit.SystemLogExtension
 import com.zepben.testutils.metrics.extensions.values
 import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.OpenTelemetry
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Test
@@ -57,5 +58,27 @@ class MetricsCaptureTest {
             // not clarifying the scope here, so just 'metric' is ambiguous between the two metrics
             withMetric("metric") { }
         }.toThrow<AmbiguousMetricException>()
+    }
+
+    @Test
+    fun `supports dependency injection`() = withCapturedMetrics {
+
+        class IngestorMetrics(openTelemetry: OpenTelemetry) {
+            val metric = openTelemetry
+                .getMeter("com.zepben.ingestor")
+                .counterBuilder("failures")
+                .build()
+        }
+
+        // don't need the explicit this@withCapturedMetrics, but just to clarify
+        val ingestorMetrics = IngestorMetrics(this@withCapturedMetrics.openTelemetry)
+
+        // oh, no! a failure
+        ingestorMetrics.metric.add(1)
+
+        withMetric("failures") {
+            assertThat(it.longSumData.values, containsInAnyOrder(1))
+        }
+
     }
 }

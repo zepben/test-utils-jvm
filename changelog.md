@@ -1,4 +1,20 @@
 # Test Utils JVM changelog
+## [3.5.0] - UNRELEASED
+### Breaking Changes
+* None.
+
+### New Features
+* None.
+
+### Enhancements
+* None.
+
+### Fixes
+* None.
+
+### Notes
+* None.
+
 ## [3.4.0] - 2026-11-10
 ### Breaking Changes
 * None.
